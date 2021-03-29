@@ -54,13 +54,15 @@ public class BaseRecorder: NSObject {
   public func makeVideoRecording(
     to url: URL,
     videoSettings: VideoSettings,
-    audioSettings: AudioSettings?
+		audioSettings: AudioSettings?,
+		initialAudioDelay: TimeInterval
   ) throws -> VideoRecording {
     try mediaSession.makeVideoRecording(
       to: url,
       videoSettings: videoSettings,
-      audioSettings: audioSettings
-    )
+			audioSettings: audioSettings,
+			initialAudioDelay: initialAudioDelay
+		)
   }
 
   public func capturePixelBuffers(

@@ -85,6 +85,7 @@
 		D5EE33F4257108C20056085A /* PixelBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE33F0257108C20056085A /* PixelBuffer.swift */; };
 		D5EE33F5257108C20056085A /* PixelBufferPool.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE33F1257108C20056085A /* PixelBufferPool.swift */; };
 		D5EE33F6257108C20056085A /* PixelBufferPoolFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EE33F2257108C20056085A /* PixelBufferPoolFactory.swift */; };
+		F433853326127833006B9286 /* CMSampleBuffer+Delay.swift in Sources */ = {isa = PBXBuildFile; fileRef = F433853226127833006B9286 /* CMSampleBuffer+Delay.swift */; };
 		FB81FF2E251B7885001C129F /* LICENSE.md in Resources */ = {isa = PBXBuildFile; fileRef = FB81FF2D251B7885001C129F /* LICENSE.md */; };
 /* End PBXBuildFile section */
 
@@ -205,6 +206,7 @@
 		D5EE33F0257108C20056085A /* PixelBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBuffer.swift; sourceTree = "<group>"; };
 		D5EE33F1257108C20056085A /* PixelBufferPool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBufferPool.swift; sourceTree = "<group>"; };
 		D5EE33F2257108C20056085A /* PixelBufferPoolFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PixelBufferPoolFactory.swift; sourceTree = "<group>"; };
+		F433853226127833006B9286 /* CMSampleBuffer+Delay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CMSampleBuffer+Delay.swift"; sourceTree = "<group>"; };
 		FB81FF2D251B7885001C129F /* LICENSE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -260,6 +262,7 @@
 			indentWidth = 2;
 			sourceTree = "<group>";
 			tabWidth = 2;
+			usesTabs = 0;
 		};
 		BE4C33D12236A6BA007AE1EE /* Products */ = {
 			isa = PBXGroup;
@@ -351,6 +354,7 @@
 				D5B9237B2510CC9A00D35585 /* MTLPixelFormat+Helpers.swift */,
 				D5B9237D2510CC9A00D35585 /* SCNView+MulticastDelegate.swift */,
 				D5B923802510CC9A00D35585 /* AVCaptureSession+BaseRecorder.swift */,
+				F433853226127833006B9286 /* CMSampleBuffer+Delay.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -774,6 +778,7 @@
 				D5B924012510CC9C00D35585 /* RecordableLayer.swift in Sources */,
 				D5B923EF2510CC9C00D35585 /* Buffer.swift in Sources */,
 				D5B924072510CC9C00D35585 /* SceneRecorder.swift in Sources */,
+				F433853326127833006B9286 /* CMSampleBuffer+Delay.swift in Sources */,
 				D5B923EA2510CC9C00D35585 /* VideoOutput.swift in Sources */,
 				D5B924092510CC9C00D35585 /* CleanRecorder.swift in Sources */,
 				D5B924102510CC9C00D35585 /* VideoRecording.Info.swift in Sources */,

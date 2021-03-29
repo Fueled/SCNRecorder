@@ -161,7 +161,8 @@ public extension SelfRecordable {
   @discardableResult
   func startVideoRecording(
     videoSettings: VideoSettings,
-    audioSettings: AudioSettings? = nil
+		audioSettings: AudioSettings? = nil,
+		initialAudioDelay: TimeInterval = 0.0
   ) throws -> VideoRecording {
     return try startVideoRecording(
       to: FileManager.default.temporaryDirectory.appendingPathComponent(
@@ -169,7 +170,8 @@ public extension SelfRecordable {
         isDirectory: false
       ),
       videoSettings: videoSettings,
-      audioSettings: audioSettings
+      audioSettings: audioSettings,
+			initialAudioDelay: initialAudioDelay
     )
   }
 
@@ -177,14 +179,16 @@ public extension SelfRecordable {
   func startVideoRecording(
     to url: URL,
     videoSettings: VideoSettings,
-    audioSettings: AudioSettings? = nil
+		audioSettings: AudioSettings? = nil,
+		initialAudioDelay: TimeInterval = 0.0
   ) throws -> VideoRecording {
     guard videoRecording == nil else { throw SelfRecordableError.videoRecordingAlreadyStarted }
 
     let videoRecording = try assertedRecorder().makeVideoRecording(
       to: url,
       videoSettings: videoSettings,
-      audioSettings: audioSettings
+      audioSettings: audioSettings,
+			initialAudioDelay: initialAudioDelay
     )
     videoRecording.resume()
 

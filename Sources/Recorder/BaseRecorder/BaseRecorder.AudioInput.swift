@@ -35,7 +35,7 @@ extension BaseRecorder {
 
     let captureOutput = AVCaptureAudioDataOutput()
 
-		var audioDelay: TimeInterval = 0.0
+    var audioDelay: TimeInterval = 0.0
 
     @UnfairAtomic var started: Bool = false
 
@@ -69,7 +69,7 @@ extension BaseRecorder.AudioInput: AVCaptureAudioDataOutputSampleBufferDelegate 
     from connection: AVCaptureConnection
   ) {
     guard started else { return }
-		self.output?(sampleBuffer.delayed(by: CMTime(seconds: self.audioDelay, preferredTimescale: 44100)) ?? sampleBuffer)
+    self.output?(sampleBuffer.delayed(byInterval: self.audioDelay) ?? sampleBuffer)
   }
 }
 
@@ -80,44 +80,6 @@ extension BaseRecorder.AudioInput: ARSessionObserver {
     didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer
   ) {
     guard started else { return }
-		queue.async { [output] in output?(audioSampleBuffer.delayed(by: CMTime(seconds: self.audioDelay, preferredTimescale: 44100)) ?? audioSampleBuffer) }
+    queue.async { [output] in output?(audioSampleBuffer.delayed(byInterval: self.audioDelay) ?? audioSampleBuffer) }
   }
-}
-
-extension CMSampleBuffer {
-	func delayed(byInterval interval: TimeInterval) -> CMSampleBuffer? {
-		self.delayed(
-			by: CMTime(
-				seconds: Double(interval),
-				preferredTimescale: CMSampleBufferGetPresentationTimeStamp(self).timescale
-			)
-		)
-	}
-
-	func delayed(by time: CMTime) -> CMSampleBuffer? {
-		var itemCount: CMItemCount = 0
-		var status = CMSampleBufferGetSampleTimingInfoArray(self, entryCount: 0, arrayToFill: nil, entriesNeededOut: &itemCount)
-		if status != kCVReturnSuccess {
-			return nil
-		}
-
-		var timingInfo = [CMSampleTimingInfo](repeating: CMSampleTimingInfo(duration: .zero, presentationTimeStamp: .zero, decodeTimeStamp: .zero), count: itemCount)
-		status = CMSampleBufferGetSampleTimingInfoArray(self, entryCount: itemCount, arrayToFill: &timingInfo, entriesNeededOut: &itemCount);
-		if status != kCVReturnSuccess {
-			return nil
-		}
-
-		for i in 0..<itemCount {
-			timingInfo[i].decodeTimeStamp = timingInfo[i].decodeTimeStamp + time;
-			timingInfo[i].presentationTimeStamp = timingInfo[i].presentationTimeStamp + time;
-		}
-
-		var sampleBuffer: CMSampleBuffer? = nil
-		status = CMSampleBufferCreateCopyWithNewTiming(allocator: kCFAllocatorDefault, sampleBuffer: self, sampleTimingEntryCount: itemCount, sampleTimingArray: &timingInfo, sampleBufferOut: &sampleBuffer)
-		if status != kCVReturnSuccess {
-			return nil
-		}
-
-		return sampleBuffer
-	}
 }
