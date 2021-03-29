@@ -121,7 +121,8 @@ extension SceneRecorderTests {
       let videoRecording = try recorder.makeVideoRecording(
         to: url,
         videoSettings: VideoSettings(fileType: fileType, codec: codec),
-        audioSettings: AudioSettings()
+        audioSettings: AudioSettings(),
+        initialAudioDelay: .zero
       )
       videoRecording.resume()
 
@@ -149,7 +150,7 @@ extension SceneRecorderTests {
 
       XCTAssertEqual(
         videoRecording.state,
-        .finished,
+        VideoRecording.State.finished,
         makeErrorMessage("Video recording state is not finished: \(videoRecording.state).")
       )
     }

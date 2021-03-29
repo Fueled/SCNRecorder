@@ -38,6 +38,8 @@ final class VideoOutput {
 
   let queue: DispatchQueue
 
+  var audioDelay: TimeInterval
+
   var state: State {
     didSet {
       videoRecording?.state = state
@@ -59,9 +61,11 @@ final class VideoOutput {
     url: URL,
     videoSettings: VideoSettings,
     audioSettings: [String: Any]?,
+    audioDelay: TimeInterval = 0.0,
     queue: DispatchQueue
   ) throws {
     self.queue = queue
+    self.audioDelay = audioDelay
     self.state = .starting
 
     queue.async { [weak self] in
@@ -177,6 +181,7 @@ extension VideoOutput {
   func appendAudio(sampleBuffer: CMSampleBuffer) throws {
     guard let audioInput = audioInput else { return }
     guard audioInput.isReadyForMoreMediaData else { return }
+    let sampleBuffer = sampleBuffer.delayed(byInterval: self.audioDelay) ?? sampleBuffer
     guard audioInput.append(sampleBuffer) else {
       if assetWriter.status == .failed { throw assetWriter.error ?? Error.unknown }
       return

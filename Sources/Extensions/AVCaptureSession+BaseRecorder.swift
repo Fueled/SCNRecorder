@@ -38,8 +38,7 @@ public extension AVCaptureSession {
   }
 
   static func makeAudioForRecorder(
-    _ recorder: BaseRecorder,
-		audioDelay: TimeInterval = 0.0
+    _ recorder: BaseRecorder
   ) throws -> AVCaptureSession {
     let captureSession = AVCaptureSession()
 
@@ -61,7 +60,6 @@ public extension AVCaptureSession {
     }
 
     captureSession.addRecorder(recorder)
-		recorder.audioInput.audioDelay = audioDelay
     return captureSession
   }
 
