@@ -31,12 +31,12 @@ public class BaseRecorder: NSObject {
 
   let mediaSession: MediaSession
 
-  var hasAudioInput = false
+	var hasAudioInput = false
 
   lazy var audioInput: AudioInput = {
     let audioInput = AudioInput(queue: queue)
     hasAudioInput = true
-    mediaSession.setAudioInput(audioInput) 
+    mediaSession.setAudioInput(audioInput)
     return audioInput
   }()
 
@@ -97,6 +97,59 @@ extension BaseRecorder: ARSessionDelegate {
     _ session: ARSession,
     didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer
   ) {
-    audioInput.session(session, didOutputAudioSampleBuffer: audioSampleBuffer)
+		audioInput.session(session, didOutputAudioSampleBuffer: audioSampleBuffer)
   }
 }
+
+//extension CMSampleBuffer {
+//	public func deepCopy(presentationTimeStamp: CMTime? = nil, decodeTimeStamp: CMTime? = nil) -> CMSampleBuffer? {
+//		guard let formatDescription = CMSampleBufferGetFormatDescription(self) else {
+//			return nil
+//		}
+//
+//		var sampleBuffer: CMSampleBuffer!
+//		var timingInfo: CMSampleTimingInfo
+//		if CMSampleBufferGetImageBuffer(self) != nil {
+//			timingInfo = CMSampleTimingInfo(
+//				duration: CMSampleBufferGetDuration(self),
+//				presentationTimeStamp: presentationTimeStamp ?? CMSampleBufferGetPresentationTimeStamp(self),
+//				decodeTimeStamp: decodeTimeStamp ?? CMSampleBufferGetDecodeTimeStamp(self)
+//			)
+//			if CMSampleBufferCreateCopyWithNewTiming(
+//				allocator: kCFAllocatorDefault,
+//				sampleBuffer: self,
+//				sampleTimingEntryCount: 1,
+//				sampleTimingArray: &timingInfo,
+//				sampleBufferOut: &sampleBuffer
+//			) != kCVReturnSuccess {
+//				return nil
+//			}
+//			return sampleBuffer
+//		} else {
+//			let audioFormatDescription = formatDescription as CMAudioFormatDescription
+//			guard let audioDescription = CMAudioFormatDescriptionGetStreamBasicDescription(audioFormatDescription)?.pointee else {
+//				return nil
+//			}
+//
+//			timingInfo = CMSampleTimingInfo(
+//				duration: CMTime(value: 1, timescale: CMTimeScale(audioDescription.mSampleRate)),
+//				presentationTimeStamp: presentationTimeStamp ?? CMSampleBufferGetPresentationTimeStamp(self),
+//				decodeTimeStamp: decodeTimeStamp ?? CMSampleBufferGetDecodeTimeStamp(self)
+//			)
+//
+//			sampleBuffer.sampleTimingInfos()
+//
+//			if CMSampleBufferCreateCopyWithNewTiming(
+//				allocator: kCFAllocatorDefault,
+//				sampleBuffer: self,
+//				sampleTimingEntryCount: 1,
+//				sampleTimingArray: &timingInfo,
+//				sampleBufferOut: &sampleBuffer
+//			) != kCVReturnSuccess {
+//				return nil
+//			}
+//		}
+//
+//		return sampleBuffer
+//	}
+//}
