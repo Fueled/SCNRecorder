@@ -36,6 +36,15 @@ public final class VideoRecording {
 
   public var fileType: AVFileType { videoOutput.fileType }
 
+	public var audioDelay: TimeInterval {
+		get {
+			videoOutput.audioDelay
+		}
+		set {
+			videoOutput.audioDelay = newValue
+		}
+	}
+
   let videoOutput: VideoOutput
 
   init(videoOutput: VideoOutput) {
