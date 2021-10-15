@@ -90,8 +90,27 @@ final class VideoOutput {
 
   deinit { state = state.cancel(self) }
 
+  private func getPreferredTransform(videoSize: CGSize) -> CGAffineTransform {
+    switch UIDevice.current.orientation {
+      case .portrait:
+        return .identity
+      case .portraitUpsideDown:
+        return CGAffineTransform(rotationAngle: -.pi)
+          .concatenating(CGAffineTransform(translationX: videoSize.width, y: videoSize.height))
+      case .landscapeLeft:
+        return CGAffineTransform(rotationAngle: -.pi / 2)
+          .concatenating(CGAffineTransform(translationX: 0, y: videoSize.width))
+      case .landscapeRight:
+        return CGAffineTransform(rotationAngle: .pi / 2)
+          .concatenating(CGAffineTransform(translationX: videoSize.height, y: 0))
+      default:
+        return .identity
+      }
+  }
+
   func addVideoInput(_ videoSettings: VideoSettings) throws {
     let videoInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings.outputSettings)
+    videoInput.transform = getPreferredTransform(videoSize: videoSettings.size!)
     videoInput.expectsMediaDataInRealTime = true
 
     guard assetWriter.canAdd(videoInput) else { throw Error.cantAddVideoAssetWriterInput }
