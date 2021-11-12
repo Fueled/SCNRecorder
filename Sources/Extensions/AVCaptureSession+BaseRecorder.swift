@@ -67,15 +67,15 @@ public extension AVCaptureSession {
   }
 
   func canAddRecorder(_ recorder: BaseRecorder) -> Bool {
-    return canAddOutput(recorder.audioInput.captureOutput)
+		return recorder.audioInput.canAddOutput(to: self)
   }
 
   func addRecorder(_ recorder: BaseRecorder) {
-    addOutput(recorder.audioInput.captureOutput)
+		return recorder.audioInput.addOutput(to: self)
   }
 
   func removeRecorder(_ recorder: BaseRecorder) {
     guard recorder.hasAudioInput else { return }
-    removeOutput(recorder.audioInput.captureOutput)
+		return recorder.audioInput.removeOutput(from: self)
   }
 }
