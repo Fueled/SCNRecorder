@@ -5,15 +5,15 @@
 //  Created by Stéphane Copin on 11/12/21.
 //
 
-import Foundation
+import CoreMedia
 
 final class BasicAudioCapturer {
 final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 	let queue: DispatchQueue?
 
-	let captureOutput = AVCaptureAudioDataOutput()
-
 	var output: ((CMSampleBuffer) -> Void)?
+
+	private let captureOutput = AVCaptureAudioDataOutput()
 
 	init(queue: DispatchQueue) {
 		self.queue = queue
@@ -24,6 +24,18 @@ final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 	func start() { started = true }
 
 	func stop() { started = false }
+
+	func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
+		captureSession.canAddOutput(self.captureOutput)
+	}
+
+	func addOutput(to captureSession: AVCaptureSession) {
+		captureSession.addOutput(self.captureOutput)
+	}
+
+	func removeOutput(from captureSession: AVCaptureSession) {
+		captureSession.removeOutput(self.captureOutput)
+	}
 
 	func recommendedAudioSettingsForAssetWriter(
 		writingTo outputFileType: AVFileType

@@ -44,6 +44,9 @@ protocol MediaSessionInput {
 }
 
 protocol AudioMediaSessionInput: MediaSessionInput {
+	func canAddOutput(to captureSession: AVCaptureSession) -> Bool
+	func addOutput(to captureSession: AVCaptureSession)
+	func removeOutput(from captureSession: AVCaptureSession)
 
   func recommendedAudioSettingsForAssetWriter(
     writingTo outputFileType: AVFileType
