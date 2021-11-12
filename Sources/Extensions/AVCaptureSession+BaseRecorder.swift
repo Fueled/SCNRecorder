@@ -41,6 +41,9 @@ public extension AVCaptureSession {
     _ recorder: BaseRecorder
   ) throws -> AVCaptureSession {
     let captureSession = AVCaptureSession()
+//		captureSession.automaticallyConfiguresApplicationAudioSession = false
+//
+//		try! AVAudioSession.sharedInstance().setCategory(.playAndRecord, options: [.allowBluetooth, .allowBluetoothA2DP])
 
     let mediaType = AVMediaType.audio
     guard let captureDevice = AVCaptureDevice.default(for: mediaType) else {

@@ -145,10 +145,18 @@ extension MediaSession {
     if videoSettings.size == nil { videoSettings.size = videoInput.size }
     videoSettings.videoColorProperties = videoInput.videoColorProperties
 
-    let audioSettingsDictionary = audioSettings?.outputSettings
-      ?? audioInput?.recommendedAudioSettingsForAssetWriter(
-        writingTo: videoSettings.fileType.avFileType
-      )
+//    let audioSettingsDictionary = audioSettings?.outputSettings
+//      ?? audioInput?.recommendedAudioSettingsForAssetWriter(
+//        writingTo: videoSettings.fileType.avFileType
+//      )
+		let audioSettingsDictionary: [String: Any] = [
+			AVFormatIDKey: kAudioFormatAppleLossless,
+			AVSampleRateKey: 44100.0,
+			AVNumberOfChannelsKey: 1,
+			AVEncoderBitDepthHintKey: 16,
+//			AVEncoderBitRateKey: 320000,
+//			AVEncoderAudioQualityKey: AVAudioQuality.max.rawValue,
+		]
 
     let videoOutput = try VideoOutput(
       url: url,

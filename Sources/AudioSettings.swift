@@ -41,7 +41,7 @@ extension AudioSettings {
     [
       AVFormatIDKey: format,
       AVSampleRateKey: sampleRate,
-      AVNumberOfChannelsKey: numberOfChannels
+			AVNumberOfChannelsKey: numberOfChannels
     ]
   }
 }
