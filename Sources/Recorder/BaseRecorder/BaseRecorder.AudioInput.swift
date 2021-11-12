@@ -28,7 +28,7 @@ import AVFoundation
 import ARKit
 
 extension BaseRecorder {
-	final class AudioInput: MediaSession.Input.SampleBufferAudio {
+	final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 		enum Mode {
 			case `default`
 			case echoCancellation
