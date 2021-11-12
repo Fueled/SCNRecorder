@@ -59,7 +59,7 @@ extension BasicSampleBufferAudio: AVCaptureAudioDataOutputSampleBufferDelegate {
 		from connection: AVCaptureConnection
 	) {
 		guard started else { return }
-		self.output?(sampleBuffer.delayed(byInterval: self.audioDelay) ?? sampleBuffer)
+		self.output?(sampleBuffer)
 	}
 }
 
@@ -69,6 +69,6 @@ extension BasicSampleBufferAudio: ARSessionObserver {
 		didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer
 	) {
 		guard started else { return }
-		queue.async { [output] in output?(audioSampleBuffer.delayed(byInterval: self.audioDelay) ?? audioSampleBuffer) }
+		queue.async { [output] in output?(audioSampleBuffer) }
 	}
 }

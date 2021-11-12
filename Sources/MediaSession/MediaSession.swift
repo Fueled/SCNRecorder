@@ -49,9 +49,9 @@ final class MediaSession {
 
     var videoColorProperties: [String: String]? { videoInput.videoColorProperties }
 
-    func start() { videoInput.start() }
+    func start() throws { try videoInput.start() }
 
-    func stop() { videoInput.stop() }
+    func stop() throws { try videoInput.stop() }
   }
 
   let queue: DispatchQueue
@@ -214,27 +214,27 @@ extension MediaSession {
     if ($videoOutputs.modify {
       $0.append(videoOutput)
       return $0.count == 1
-    }) { videoInput.start() }
+    }) { try? videoInput.start() }
   }
 
   func removeVideoOutput(_ videoOutput: MediaSession.Output.Video) {
     if ($videoOutputs.modify {
       $0 = $0.filter { $0 !== videoOutput }
       return $0.count == 0
-    }) { videoInput.stop() }
+    }) { try? videoInput.stop() }
   }
 
   func addAudioOutput(_ audioOutput: MediaSession.Output.Audio) {
     if ($audioOutputs.modify {
       $0.append(audioOutput)
       return $0.count == 1
-    }) { audioInput?.start() }
+    }) { try? audioInput?.start() }
   }
 
   func removeAudioOutput(_ audioOutput: MediaSession.Output.Audio) {
     if ($audioOutputs.modify {
       $0 = $0.filter { $0 !== audioOutput }
       return $0.count == 0
-    }) { audioInput?.stop() }
+    }) { try? audioInput?.stop() }
   }
 }

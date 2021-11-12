@@ -52,7 +52,7 @@ extension BaseRecorder {
 			case .default:
 				self.internalSampleBufferAudio = BasicSampleBufferAudio(queue: queue)
 			case .echoCancellation:
-				self.internalSampleBufferAudio = EchoCancellationSampleBufferAudio(queue: queue)
+				self.internalSampleBufferAudio = (try? EchoCancellationSampleBufferAudio(queue: queue)) ?? BasicSampleBufferAudio(queue: queue)
 			}
 		}
 
@@ -82,4 +82,11 @@ extension BaseRecorder {
 			self.internalSampleBufferAudio.recommendedAudioSettingsForAssetWriter(writingTo: outputFileType)
 		}
   }
+}
+
+extension BaseRecorder.AudioInput: ARSessionObserver {
+	func session(_ session: ARSession, didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer) {
+		let delegate = self.internalSampleBufferAudio as? ARSessionObserver
+		delegate.session?(session, didOutputAudioSampleBuffer: audioSampleBuffer)
+	}
 }
