@@ -39,7 +39,7 @@ extension BaseRecorder {
 			didSet {
 				self.internalSampleBufferAudio.output = self.output.map { output in
 					{ [weak self] sampleBuffer in
-						sampleBuffer.delayed(byInterval: self?.audioDelay ?? 0.0) ?? sampleBuffer)
+						sampleBuffer.delayed(byInterval: self?.audioDelay ?? 0.0) ?? sampleBuffer
 					}
 				}
 			}
@@ -56,12 +56,12 @@ extension BaseRecorder {
 			}
 		}
 
-		func start() {
-			self.internalSampleBufferAudio.start()
+		func start() throws {
+			try self.internalSampleBufferAudio.start()
 		}
 
-		func stop() {
-			self.internalSampleBufferAudio.stop()
+		func stop() throws {
+			try self.internalSampleBufferAudio.stop()
 		}
 
 		func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
