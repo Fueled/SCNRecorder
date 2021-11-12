@@ -135,13 +135,13 @@ final class EchoCancellationSampleBufferAudio {
 						timestamp: inTimeStamp.pointee
 					)
 
-					if let queue = this.queue {
-						queue.async {
-							this.output?(sampleBuffer)
-						}
-					} else {
+//					if let queue = this.queue {
+//						queue.async {
+//							this.output?(sampleBuffer)
+//						}
+//					} else {
 						this.output?(sampleBuffer)
-					}
+//					}
 
 					return noErr
 				} catch Error.code(let status) {
