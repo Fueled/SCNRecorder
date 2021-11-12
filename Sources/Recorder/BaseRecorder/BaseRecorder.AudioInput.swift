@@ -87,6 +87,6 @@ extension BaseRecorder {
 extension BaseRecorder.AudioInput: ARSessionObserver {
 	func session(_ session: ARSession, didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer) {
 		let delegate = self.internalSampleBufferAudio as? ARSessionObserver
-		delegate.session?(session, didOutputAudioSampleBuffer: audioSampleBuffer)
+		delegate?.session?(session, didOutputAudioSampleBuffer: audioSampleBuffer)
 	}
 }

@@ -331,5 +331,10 @@ extension EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAudi
 	}
 
 	func recommendedAudioSettingsForAssetWriter(writingTo outputFileType: AVFileType) -> [String: Any] {
+		[
+			AVFormatIDKey: kAudioFormatMPEG4AAC,
+			AVSampleRateKey: EchoCancellationSampleBufferAudio.sampleRate,
+			AVNumberOfChannelsKey: 1,
+		]
 	}
 }
