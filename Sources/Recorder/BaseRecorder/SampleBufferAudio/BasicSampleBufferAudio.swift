@@ -23,11 +23,11 @@ final class BasicSampleBufferAudio: NSObject, MediaSession.Input.SampleBufferAud
 		self.captureOutput.setSampleBufferDelegate(self, queue: queue)
 	}
 
-	func start() {
+	func start() throws {
 		self.started = true
 	}
 
-	func stop() {
+	func stop() throws {
 		self.started = false
 	}
 

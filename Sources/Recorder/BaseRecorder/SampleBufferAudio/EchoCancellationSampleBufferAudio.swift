@@ -9,7 +9,7 @@ import AudioToolbox
 import AVFoundation
 import CoreMedia
 
-final class EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAudio {
+final class EchoCancellationSampleBufferAudio {
 	enum Error: Swift.Error {
 		case noInputs
 		case code(OSStatus)
@@ -43,14 +43,14 @@ final class EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAu
 	private static let sampleRate = 44100
 	private static let bytesPerSample: UInt32 = 2
 	private static let audioStreamDescription = AudioStreamBasicDescription(
-		mSampleRate: Float64(AudioCapturer.sampleRate),
+		mSampleRate: Float64(EchoCancellationSampleBufferAudio.sampleRate),
 		mFormatID: kAudioFormatLinearPCM,
 		mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked,
-		mBytesPerPacket: AudioCapturer.bytesPerSample,
+		mBytesPerPacket: EchoCancellationSampleBufferAudio.bytesPerSample,
 		mFramesPerPacket: 1,
-		mBytesPerFrame: AudioCapturer.bytesPerSample,
+		mBytesPerFrame: EchoCancellationSampleBufferAudio.bytesPerSample,
 		mChannelsPerFrame: 1,
-		mBitsPerChannel: 8 * AudioCapturer.bytesPerSample,
+		mBitsPerChannel: 8 * EchoCancellationSampleBufferAudio.bytesPerSample,
 		mReserved: 0
 	)
 	private static let inputBus: AudioUnitElement = 1
@@ -121,7 +121,7 @@ final class EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAu
 
 		var callback = AURenderCallbackStruct(
 			inputProc: { inRefCon, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, _ in
-				let this = Unmanaged<AudioCapturer>.fromOpaque(inRefCon).takeUnretainedValue()
+				let this = Unmanaged<EchoCancellationSampleBufferAudio>.fromOpaque(inRefCon).takeUnretainedValue()
 				do {
 					var buffer = try this.renderAudio(
 						ioActionFlags: ioActionFlags,
@@ -202,23 +202,6 @@ final class EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAu
 			AudioOutputUnitStop(self.inputAudioUnit)
 		}
 	}
-
-	func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
-		<#code#>
-	}
-
-	func addOutput(to captureSession: AVCaptureSession) {
-		<#code#>
-	}
-
-	func removeOutput(from captureSession: AVCaptureSession) {
-		<#code#>
-	}
-
-	func recommendedAudioSettingsForAssetWriter(writingTo outputFileType: AVFileType) -> [String : Any] {
-		<#code#>
-	}
-
 
 	private enum StatusResult<Result> {
 		case result(Result)
@@ -332,6 +315,21 @@ private func memoryLayout<Type>(of _: Type) -> MemoryLayout<Type>.Type {
 private func doCall(_ function: () -> OSStatus) throws {
 	let status = function()
 	if status != noErr {
-		throw AudioCapturer.Error.code(status)
+		throw EchoCancellationSampleBufferAudio.Error.code(status)
+	}
+}
+
+extension EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAudio {
+	func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
+		true
+	}
+
+	func addOutput(to captureSession: AVCaptureSession) {
+	}
+
+	func removeOutput(from captureSession: AVCaptureSession) {
+	}
+
+	func recommendedAudioSettingsForAssetWriter(writingTo outputFileType: AVFileType) -> [String: Any] {
 	}
 }
