@@ -38,7 +38,9 @@ extension BaseRecorder {
 		var output: ((CMSampleBuffer) -> Void)? {
 			didSet {
 				self.internalSampleBufferAudio.output = self.output.map { output in
-					output(sampleBuffer.delayed(byInterval: self.audioDelay ?? 0.0) ?? sampleBuffer)
+					{ [weak self] sampleBuffer in
+						sampleBuffer.delayed(byInterval: self?.audioDelay ?? 0.0) ?? sampleBuffer)
+					}
 				}
 			}
 		}
@@ -50,7 +52,7 @@ extension BaseRecorder {
 			case .default:
 				self.internalSampleBufferAudio = BasicSampleBufferAudio(queue: queue)
 			case .echoCancellation:
-				self.internalSampleBufferAudio = AudioCapturerEchoCancellation(queue: queue)
+				self.internalSampleBufferAudio = EchoCancellationSampleBufferAudio(queue: queue)
 			}
 		}
 
