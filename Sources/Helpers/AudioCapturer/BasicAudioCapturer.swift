@@ -5,15 +5,16 @@
 //  Created by Stéphane Copin on 11/12/21.
 //
 
+import AVFoundation
 import CoreMedia
 
-final class BasicAudioCapturer {
-final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
-	let queue: DispatchQueue?
-
-	var output: ((CMSampleBuffer) -> Void)?6
+final class BasicSampleBufferAudio: NSObject, MediaSession.Input.SampleBufferAudio {
+	var output: ((CMSampleBuffer) -> Void)?
 
 	private let captureOutput = AVCaptureAudioDataOutput()
+	private let queue: DispatchQueue?
+
+	private var started = false
 
 	init(queue: DispatchQueue) {
 		self.queue = queue
@@ -21,9 +22,13 @@ final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 		self.captureOutput.setSampleBufferDelegate(self, queue: queue)
 	}
 
-	func start() { started = true }
+	func start() {
+		self.started = true
+	}
 
-	func stop() { started = false }
+	func stop() {
+		self.started = false
+	}
 
 	func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
 		captureSession.canAddOutput(self.captureOutput)
@@ -46,8 +51,7 @@ final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 	}
 }
 
-extension BaseRecorder.AudioInput: AVCaptureAudioDataOutputSampleBufferDelegate {
-
+extension BasicSampleBufferAudio: AVCaptureAudioDataOutputSampleBufferDelegate {
 	@objc func captureOutput(
 		_ output: AVCaptureOutput,
 		didOutput sampleBuffer: CMSampleBuffer,
@@ -58,8 +62,7 @@ extension BaseRecorder.AudioInput: AVCaptureAudioDataOutputSampleBufferDelegate 
 	}
 }
 
-extension BaseRecorder.AudioInput: ARSessionObserver {
-
+extension BasicSampleBufferAudio: ARSessionObserver {
 	func session(
 		_ session: ARSession,
 		didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer
