@@ -28,35 +28,56 @@ import AVFoundation
 import ARKit
 
 extension BaseRecorder {
-  struct AudioInput: MediaSession.Input.SampleBufferAudio {
-		let capturer: AudioCapturer
+	final class AudioInput: MediaSession.Input.SampleBufferAudio {
+		enum Mode {
+			case `default`
+			case echoCancellation
+		}
 
 		var audioDelay: TimeInterval = 0.0
+		var output: ((CMSampleBuffer) -> Void)? {
+			didSet {
+				self.internalSampleBufferAudio.output = self.output.map { output in
+					output(sampleBuffer.delayed(byInterval: self.audioDelay ?? 0.0) ?? sampleBuffer)
+				}
+			}
+		}
+
+		private let internalSampleBufferAudio: MediaSession.Input.SampleBufferAudio
+
+		init(queue: DispatchQueue, mode: Mode = .echoCancellation) {
+			switch mode {
+			case .default:
+				self.internalSampleBufferAudio = BasicSampleBufferAudio(queue: queue)
+			case .echoCancellation:
+				self.internalSampleBufferAudio = AudioCapturerEchoCancellation(queue: queue)
+			}
+		}
 
 		func start() {
-			self.capturer.start()
+			self.internalSampleBufferAudio.start()
 		}
 
 		func stop() {
-			self.capturer.stop()
+			self.internalSampleBufferAudio.stop()
 		}
 
 		func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
-			self.canAddOutput(to: captureSession)
+			self.internalSampleBufferAudio.canAddOutput(to: captureSession)
 		}
 
 		func addOutput(to captureSession: AVCaptureSession) {
-			self.addOutput(to: captureSession)
+			self.internalSampleBufferAudio.addOutput(to: captureSession)
 		}
 
 		func removeOutput(from captureSession: AVCaptureSession) {
-			self.removeOutput(from: captureSession)
+			self.internalSampleBufferAudio.removeOutput(from: captureSession)
 		}
 
 		func recommendedAudioSettingsForAssetWriter(
 			writingTo outputFileType: AVFileType
 		) -> [String : Any] {
-			self.recommendedAudioSettingsForAssetWriter(writingTo: outputFileType)
+			self.internalSampleBufferAudio.recommendedAudioSettingsForAssetWriter(writingTo: outputFileType)
 		}
   }
 }

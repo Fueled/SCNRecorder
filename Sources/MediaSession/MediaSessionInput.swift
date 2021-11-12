@@ -38,9 +38,9 @@ protocol MediaSessionInput {
 
   typealias PixelBufferVideo = Video & BufferInput
 
-  func start()
+  func start() throws
 
-  func stop()
+  func stop() throws
 }
 
 protocol AudioMediaSessionInput: MediaSessionInput {

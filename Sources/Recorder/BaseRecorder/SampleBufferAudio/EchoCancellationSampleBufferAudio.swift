@@ -1,5 +1,5 @@
 //
-//  AudioCapturerEchoCancellation.swift
+//  EchoCancellationSampleBufferAudio.swift
 //  SCNRecorder
 //
 //  Created by Stéphane Copin on 11/12/21.
@@ -9,7 +9,7 @@ import AudioToolbox
 import AVFoundation
 import CoreMedia
 
-final class AudioCapturerEchoCancellation {
+final class EchoCancellationSampleBufferAudio: MediaSession.Input.SampleBufferAudio {
 	enum Error: Swift.Error {
 		case noInputs
 		case code(OSStatus)
@@ -43,14 +43,14 @@ final class AudioCapturerEchoCancellation {
 	private static let sampleRate = 44100
 	private static let bytesPerSample: UInt32 = 2
 	private static let audioStreamDescription = AudioStreamBasicDescription(
-		mSampleRate: Float64(AudioCapturerEchoCancellation.sampleRate),
+		mSampleRate: Float64(AudioCapturer.sampleRate),
 		mFormatID: kAudioFormatLinearPCM,
 		mFormatFlags: kAudioFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked,
-		mBytesPerPacket: AudioCapturerEchoCancellation.bytesPerSample,
+		mBytesPerPacket: AudioCapturer.bytesPerSample,
 		mFramesPerPacket: 1,
-		mBytesPerFrame: AudioCapturerEchoCancellation.bytesPerSample,
+		mBytesPerFrame: AudioCapturer.bytesPerSample,
 		mChannelsPerFrame: 1,
-		mBitsPerChannel: 8 * AudioCapturerEchoCancellation.bytesPerSample,
+		mBitsPerChannel: 8 * AudioCapturer.bytesPerSample,
 		mReserved: 0
 	)
 	private static let inputBus: AudioUnitElement = 1
@@ -121,7 +121,7 @@ final class AudioCapturerEchoCancellation {
 
 		var callback = AURenderCallbackStruct(
 			inputProc: { inRefCon, ioActionFlags, inTimeStamp, inBusNumber, inNumberFrames, _ in
-				let this = Unmanaged<AudioCapturerEchoCancellation>.fromOpaque(inRefCon).takeUnretainedValue()
+				let this = Unmanaged<AudioCapturer>.fromOpaque(inRefCon).takeUnretainedValue()
 				do {
 					var buffer = try this.renderAudio(
 						ioActionFlags: ioActionFlags,
@@ -202,6 +202,23 @@ final class AudioCapturerEchoCancellation {
 			AudioOutputUnitStop(self.inputAudioUnit)
 		}
 	}
+
+	func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
+		<#code#>
+	}
+
+	func addOutput(to captureSession: AVCaptureSession) {
+		<#code#>
+	}
+
+	func removeOutput(from captureSession: AVCaptureSession) {
+		<#code#>
+	}
+
+	func recommendedAudioSettingsForAssetWriter(writingTo outputFileType: AVFileType) -> [String : Any] {
+		<#code#>
+	}
+
 
 	private enum StatusResult<Result> {
 		case result(Result)
