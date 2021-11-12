@@ -47,7 +47,7 @@ extension BaseRecorder {
 
 		private let internalSampleBufferAudio: MediaSession.Input.SampleBufferAudio
 
-		init(queue: DispatchQueue, mode: Mode = .echoCancellation) {
+		init(queue: DispatchQueue, mode: Mode) {
 			switch mode {
 			case .default:
 				self.internalSampleBufferAudio = BasicSampleBufferAudio(queue: queue)
