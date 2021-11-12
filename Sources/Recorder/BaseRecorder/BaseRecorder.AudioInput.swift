@@ -28,58 +28,35 @@ import AVFoundation
 import ARKit
 
 extension BaseRecorder {
+  struct AudioInput: MediaSession.Input.SampleBufferAudio {
+		let capturer: AudioCapturer
 
-  final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
+		var audioDelay: TimeInterval = 0.0
 
-    let queue: DispatchQueue
+		func start() {
+			self.capturer.start()
+		}
 
-    let captureOutput = AVCaptureAudioDataOutput()
+		func stop() {
+			self.capturer.stop()
+		}
 
-    var audioDelay: TimeInterval = 0.0
+		func canAddOutput(to captureSession: AVCaptureSession) -> Bool {
+			self.canAddOutput(to: captureSession)
+		}
 
-    @UnfairAtomic var started: Bool = false
+		func addOutput(to captureSession: AVCaptureSession) {
+			self.addOutput(to: captureSession)
+		}
 
-    var output: ((CMSampleBuffer) -> Void)?
+		func removeOutput(from captureSession: AVCaptureSession) {
+			self.removeOutput(from: captureSession)
+		}
 
-    init(queue: DispatchQueue) {
-      self.queue = queue
-      super.init()
-      self.captureOutput.setSampleBufferDelegate(self, queue: queue)
-    }
-
-    func start() { started = true }
-
-    func stop() { started = false }
-
-    func recommendedAudioSettingsForAssetWriter(
-      writingTo outputFileType: AVFileType
-    ) -> [String : Any] {
-      captureOutput.recommendedAudioSettingsForAssetWriter(
-        writingTo: outputFileType
-      ) as? [String: Any] ?? AudioSettings().outputSettings
-    }
-  }
-}
-
-extension BaseRecorder.AudioInput: AVCaptureAudioDataOutputSampleBufferDelegate {
-
-  @objc func captureOutput(
-    _ output: AVCaptureOutput,
-    didOutput sampleBuffer: CMSampleBuffer,
-    from connection: AVCaptureConnection
-  ) {
-    guard started else { return }
-    self.output?(sampleBuffer.delayed(byInterval: self.audioDelay) ?? sampleBuffer)
-  }
-}
-
-extension BaseRecorder.AudioInput: ARSessionObserver {
-
-  func session(
-    _ session: ARSession,
-    didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer
-  ) {
-    guard started else { return }
-    queue.async { [output] in output?(audioSampleBuffer.delayed(byInterval: self.audioDelay) ?? audioSampleBuffer) }
+		func recommendedAudioSettingsForAssetWriter(
+			writingTo outputFileType: AVFileType
+		) -> [String : Any] {
+			self.recommendedAudioSettingsForAssetWriter(writingTo: outputFileType)
+		}
   }
 }

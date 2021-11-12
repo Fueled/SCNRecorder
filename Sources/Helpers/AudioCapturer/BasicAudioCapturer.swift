@@ -11,7 +11,7 @@ final class BasicAudioCapturer {
 final class AudioInput: NSObject, MediaSession.Input.SampleBufferAudio {
 	let queue: DispatchQueue?
 
-	var output: ((CMSampleBuffer) -> Void)?
+	var output: ((CMSampleBuffer) -> Void)?6
 
 	private let captureOutput = AVCaptureAudioDataOutput()
 

@@ -54,7 +54,6 @@ protocol AudioMediaSessionInput: MediaSessionInput {
 }
 
 protocol VideoMediaSessionInput: MediaSessionInput {
-
   var size: CGSize { get }
 
   var videoColorProperties: [String: String]? { get }
