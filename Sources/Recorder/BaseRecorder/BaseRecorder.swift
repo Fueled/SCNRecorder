@@ -56,19 +56,27 @@ public class BaseRecorder: NSObject {
     self.mediaSession.$error.observe { [weak self] in self?.error = $0 }
   }
 
-  public func makeVideoRecording(
-    to url: URL,
-    videoSettings: VideoSettings,
+	public func makeVideoRecording(
+		to url: URL,
+		videoSettings: VideoSettings,
 		audioSettings: AudioSettings?,
 		initialAudioDelay: TimeInterval
-  ) throws -> VideoRecording {
-    try mediaSession.makeVideoRecording(
-      to: url,
-      videoSettings: videoSettings,
+	) throws -> VideoRecording {
+		try mediaSession.makeVideoRecording(
+			to: url,
+			videoSettings: videoSettings,
 			audioSettings: audioSettings,
 			initialAudioDelay: initialAudioDelay
 		)
-  }
+	}
+
+	public func makeVideoStreamer(
+		initialAudioDelay: TimeInterval
+	) -> VideoStreamer {
+		mediaSession.makeVideoStreamer(
+			initialAudioDelay: initialAudioDelay
+		)
+	}
 
   public func capturePixelBuffers(
     handler: @escaping (CVPixelBuffer, CMTime) -> Void
@@ -108,55 +116,31 @@ extension BaseRecorder: ARSessionDelegate {
   }
 }
 
-//extension CMSampleBuffer {
-//	public func deepCopy(presentationTimeStamp: CMTime? = nil, decodeTimeStamp: CMTime? = nil) -> CMSampleBuffer? {
-//		guard let formatDescription = CMSampleBufferGetFormatDescription(self) else {
-//			return nil
-//		}
-//
-//		var sampleBuffer: CMSampleBuffer!
-//		var timingInfo: CMSampleTimingInfo
-//		if CMSampleBufferGetImageBuffer(self) != nil {
-//			timingInfo = CMSampleTimingInfo(
-//				duration: CMSampleBufferGetDuration(self),
-//				presentationTimeStamp: presentationTimeStamp ?? CMSampleBufferGetPresentationTimeStamp(self),
-//				decodeTimeStamp: decodeTimeStamp ?? CMSampleBufferGetDecodeTimeStamp(self)
-//			)
-//			if CMSampleBufferCreateCopyWithNewTiming(
-//				allocator: kCFAllocatorDefault,
-//				sampleBuffer: self,
-//				sampleTimingEntryCount: 1,
-//				sampleTimingArray: &timingInfo,
-//				sampleBufferOut: &sampleBuffer
-//			) != kCVReturnSuccess {
-//				return nil
-//			}
-//			return sampleBuffer
-//		} else {
-//			let audioFormatDescription = formatDescription as CMAudioFormatDescription
-//			guard let audioDescription = CMAudioFormatDescriptionGetStreamBasicDescription(audioFormatDescription)?.pointee else {
-//				return nil
-//			}
-//
-//			timingInfo = CMSampleTimingInfo(
-//				duration: CMTime(value: 1, timescale: CMTimeScale(audioDescription.mSampleRate)),
-//				presentationTimeStamp: presentationTimeStamp ?? CMSampleBufferGetPresentationTimeStamp(self),
-//				decodeTimeStamp: decodeTimeStamp ?? CMSampleBufferGetDecodeTimeStamp(self)
-//			)
-//
-//			sampleBuffer.sampleTimingInfos()
-//
-//			if CMSampleBufferCreateCopyWithNewTiming(
-//				allocator: kCFAllocatorDefault,
-//				sampleBuffer: self,
-//				sampleTimingEntryCount: 1,
-//				sampleTimingArray: &timingInfo,
-//				sampleBufferOut: &sampleBuffer
-//			) != kCVReturnSuccess {
-//				return nil
-//			}
-//		}
-//
-//		return sampleBuffer
-//	}
-//}
+public enum VideoStreamingState {
+	case streaming
+	case finished
+}
+
+public final class VideoStreamer {
+	@Observable public private(set) var state: VideoStreamingState = .streaming {
+		didSet {
+			if state == .finished {
+				self.onFinalState?()
+			}
+		}
+	}
+
+	public var videoOutput: ((CVBuffer, CMTime) -> Void)?
+	public var audioOutput: ((CMSampleBuffer) -> Void)?
+	public var audioDelay: TimeInterval
+
+	var onFinalState: (() -> Void)?
+
+	init(initialAudioDelay: TimeInterval = 0.0) {
+		self.audioDelay = initialAudioDelay
+	}
+
+	public func finish() {
+		self.state = .finished
+	}
+}

@@ -174,6 +174,62 @@ extension MediaSession {
     return videoOutput.startVideoRecording()
   }
 
+  func makeVideoStreamer(
+		initialAudioDelay: TimeInterval = 0.0
+  ) -> VideoStreamer {
+		let videoStreamer = VideoStreamer(initialAudioDelay: initialAudioDelay)
+		final class StreamingOutput: MediaSession.Output.Video, MediaSession.Output.Audio {
+			var videoStreamer: VideoStreamer?
+
+			func appendVideoSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+				guard let imageBuffer: CVImageBuffer = {
+					if #available(iOS 13.0, *) {
+						return sampleBuffer.imageBuffer
+					} else {
+						return CMSampleBufferGetImageBuffer(sampleBuffer)
+					}
+				}() else { return }
+
+				let time: CMTime
+				if #available(iOS 13.0, *) {
+					time = sampleBuffer.presentationTimeStamp
+				} else {
+					time = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+				}
+
+				self.appendVideoPixelBuffer(imageBuffer, at: time)
+			}
+
+			func appendVideoPixelBuffer(_ pixelBuffer: CVPixelBuffer, at time: CMTime) {
+				self.videoStreamer?.videoOutput?(pixelBuffer, time)
+			}
+
+			func appendAudioSampleBuffer(_ sampleBuffer: CMSampleBuffer) {
+				guard let videoStreamer = self.videoStreamer else {
+					return
+				}
+
+				videoStreamer.audioOutput?(sampleBuffer.delayed(byInterval: videoStreamer.audioDelay) ?? sampleBuffer)
+			}
+		}
+
+    let streamingOutput = StreamingOutput()
+		streamingOutput.videoStreamer = videoStreamer
+
+		videoStreamer.onFinalState = { [weak self, weak streamingOutput] in
+			guard let self = self, let streamingOutput = streamingOutput else {
+				return
+			}
+			self.removeVideoOutput(streamingOutput)
+			self.removeAudioOutput(streamingOutput)
+		}
+
+    addVideoOutput(streamingOutput)
+    addAudioOutput(streamingOutput)
+
+    return videoStreamer
+  }
+
   func takePhoto(
     scale: CGFloat,
     orientation: UIImage.Orientation?,
